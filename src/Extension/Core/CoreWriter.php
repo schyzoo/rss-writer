@@ -131,8 +131,8 @@ class CoreWriter implements WriterRegistererInterface
             $writer->writeElement('comments', $item->getComments());
         }
 
-        if ($item->getEnclosure()) {
-            $this->writeEnclosure($writer, $item->getEnclosure());
+        foreach ($item->getEnclosures() as $enclosure) {
+            $this->writeEnclosure($writer, $enclosure);
         }
 
         if ($item->getGuid()) {

@@ -49,12 +49,21 @@ class RssWriterTest extends \PHPUnit_Framework_TestCase
             ->setProtocol('http')
             ->setProtocol('soap');
 
+        $enclosures = [];
         $enclosure = new Enclosure();
         $enclosure->setUrl('http://www.example.com/audio.mp3')
                   ->setLength(123)
                   ->setType('audio/wave')
                   ->setType('audio/mp3')
         ;
+        $enclosures[] = $enclosure;
+
+        $enclosure = new Enclosure();
+        $enclosure->setUrl('http://www.example.com/pic.jpg')
+            ->setLength(235)
+            ->setType('image/jpeg')
+        ;
+        $enclosures[] = $enclosure;
 
         $image = new Image();
         $image->setUrl('https://example.com/img.jpg')
@@ -94,7 +103,8 @@ class RssWriterTest extends \PHPUnit_Framework_TestCase
             ->setDescription('My Description')
             ->setAuthor('john.doe@example.com (John Doe)')
             ->setComments('https://example.com/my-title#comments')
-            ->setEnclosure($enclosure)
+            ->setEnclosures($enclosures)
+            ->addEnclosure($enclosures[0])
             ->setPubDate($pubDate)
             ->setSource($source)
             ->setCategories(['cat1', 'cat2'])
@@ -138,6 +148,8 @@ class RssWriterTest extends \PHPUnit_Framework_TestCase
    <description><![CDATA[My Description]]></description>
    <author><![CDATA[john.doe@example.com (John Doe)]]></author>
    <comments>https://example.com/my-title#comments</comments>
+   <enclosure url="http://www.example.com/audio.mp3" length="123" type="audio/mp3"/>
+   <enclosure url="http://www.example.com/pic.jpg" length="235" type="image/jpeg"/>
    <enclosure url="http://www.example.com/audio.mp3" length="123" type="audio/mp3"/>
    <guid isPermaLink="false"><![CDATA[14]]></guid>
    <pubDate>Mon, 01 Jan 2001 00:00:00 +0000</pubDate>

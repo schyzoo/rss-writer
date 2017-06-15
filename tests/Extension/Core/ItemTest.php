@@ -14,6 +14,7 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         $item = new Item();
 
         $enclosure = (new Enclosure())->setUrl('https://example.com/enclosure.mp3')->setLength(123)->setType('audio/mp3');
+        $enclosure2 = (new Enclosure())->setUrl('https://example.com/pic.png')->setLength(325)->setType('image/png');
         $source = (new Source())->setUrl('https://example.com')->setTitle('My Source');
         $pubDate = new \DateTime(2001-01-01, new \DateTimeZone('UTC'));
 
@@ -27,7 +28,8 @@ class ItemTest extends \PHPUnit_Framework_TestCase
             ->setDescription('My Description')
             ->setAuthor('John Doe <john.doe@example.com')
             ->setComments('https://example.com/my-title#comments')
-            ->setEnclosure($enclosure)
+            ->setEnclosures([$enclosure, $enclosure2])
+            ->addEnclosure($enclosure)
             ->setPubDate($pubDate)
             ->setSource($source)
             ->setCategories(['cat1', 'cat2'])
@@ -42,7 +44,7 @@ class ItemTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('My Description', $item->getDescription());
         $this->assertEquals('John Doe <john.doe@example.com', $item->getAuthor());
         $this->assertEquals('https://example.com/my-title#comments', $item->getComments());
-        $this->assertSame($enclosure, $item->getEnclosure());
+        $this->assertSame([$enclosure, $enclosure2, $enclosure], $item->getEnclosures());
         $this->assertSame(['cat1', 'cat2', 'cat3'], $item->getCategories());
         $this->assertSame([$ext1, $ext2], $item->getExtensions());
         $this->assertSame($guid, $item->getGuid());

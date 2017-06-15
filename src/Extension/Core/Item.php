@@ -31,7 +31,7 @@ final class Item
      * @Assert\Url
      */
     private $comments;
-    private $enclosure;
+    private $enclosures = [];
     private $guid;
     private $pubDate;
     private $source;
@@ -96,16 +96,23 @@ final class Item
         return $this->comments;
     }
 
-    public function setEnclosure(Enclosure $enclosure = null)
+    public function setEnclosures(array $enclosures = [])
     {
-        $this->enclosure = $enclosure;
+        $this->enclosures = $enclosures;
 
         return $this;
     }
 
-    public function getEnclosure()
+    public function getEnclosures()
     {
-        return $this->enclosure;
+        return $this->enclosures;
+    }
+
+    public function addEnclosure($enclosure)
+    {
+        $this->enclosures[] = $enclosure;
+
+        return $this;
     }
 
     public function setGuid(Guid $guid = null)
