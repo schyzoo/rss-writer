@@ -21,6 +21,8 @@ use MarcW\RssWriter\Extension\Slash\Slash;
 use MarcW\RssWriter\Extension\Slash\SlashWriter;
 use MarcW\RssWriter\Extension\Sy\Sy;
 use MarcW\RssWriter\Extension\Sy\SyWriter;
+use MarcW\RssWriter\Extension\Content\Content;
+use MarcW\RssWriter\Extension\Content\ContentWriter;
 use MarcW\RssWriter\RssWriter;
 
 class RssWriterTest extends \PHPUnit_Framework_TestCase
@@ -34,6 +36,7 @@ class RssWriterTest extends \PHPUnit_Framework_TestCase
         $rssWriter->registerWriter(new SlashWriter());
         $rssWriter->registerWriter(new AtomWriter());
         $rssWriter->registerWriter(new DublinCoreWriter());
+        $rssWriter->registerWriter(new ContentWriter());
 
         $source = new Source();
         $source->setUrl('https://example.com')
@@ -115,11 +118,12 @@ class RssWriterTest extends \PHPUnit_Framework_TestCase
         $channel->addItem($item);
         $item->addExtension((new Slash())->setComments(140));
         $item->addExtension((new DublinCore())->setCreator('John Doe'));
+        $item->addExtension((new Content)->setContent('<p>What\'s up, doc?</p>'));
         $xml = $rssWriter->writeChannel($channel);
 
         $expected = <<<EOF
 <?xml version="1.0"?>
-<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
  <channel>
   <title><![CDATA[My Title]]></title>
   <link>https://www.example.com</link>
@@ -156,6 +160,7 @@ class RssWriterTest extends \PHPUnit_Framework_TestCase
    <source url="https://example.com"><![CDATA[Example Title]]></source>
    <slash:comments>140</slash:comments>
    <dc:creator><![CDATA[John Doe]]></dc:creator>
+   <content:encoded><![CDATA[<p>What's up, doc?</p>]]></content:encoded>
   </item>
  </channel>
 </rss>
