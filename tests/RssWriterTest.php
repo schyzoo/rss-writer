@@ -26,6 +26,8 @@ use MarcW\RssWriter\Extension\Content\ContentWriter;
 use MarcW\RssWriter\Extension\Mrss\Mrss;
 use MarcW\RssWriter\Extension\Mrss\Rating;
 use MarcW\RssWriter\Extension\Mrss\MrssWriter;
+use MarcW\RssWriter\Extension\Fulltext\Fulltext;
+use MarcW\RssWriter\Extension\Fulltext\FulltextWriter;
 use MarcW\RssWriter\RssWriter;
 
 class RssWriterTest extends \PHPUnit_Framework_TestCase
@@ -41,6 +43,7 @@ class RssWriterTest extends \PHPUnit_Framework_TestCase
         $rssWriter->registerWriter(new DublinCoreWriter());
         $rssWriter->registerWriter(new ContentWriter());
         $rssWriter->registerWriter(new MrssWriter());
+        $rssWriter->registerWriter(new FulltextWriter());
 
         $source = new Source();
         $source->setUrl('https://example.com')
@@ -124,6 +127,7 @@ class RssWriterTest extends \PHPUnit_Framework_TestCase
         $item->addExtension((new DublinCore())->setCreator('John Doe'));
         $item->addExtension((new Content)->setContent('<p>What\'s up, doc?</p>'));
         $item->addExtension((new Mrss)->setRating((new Rating)->setValue(Rating::RATING_ADULT)));
+        $item->addExtension((new Fulltext)->setFulltext('full-text content'));
         $xml = $rssWriter->writeChannel($channel);
 
         $expected = <<<EOF
@@ -167,6 +171,7 @@ class RssWriterTest extends \PHPUnit_Framework_TestCase
    <dc:creator><![CDATA[John Doe]]></dc:creator>
    <content:encoded><![CDATA[<p>What's up, doc?</p>]]></content:encoded>
    <media:rating scheme="urn:simple">adult</media:rating>
+   <full-text><![CDATA[full-text content]]></full-text>
   </item>
  </channel>
 </rss>
