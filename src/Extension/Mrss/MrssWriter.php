@@ -20,7 +20,7 @@ class MrssWriter implements WriterRegistererInterface
     public function getRegisteredNamespaces()
     {
         return [
-            'mrss' => 'http://search.yahoo.com/mrss/',
+            'media' => 'http://search.yahoo.com/mrss/',
         ];
     }
 
