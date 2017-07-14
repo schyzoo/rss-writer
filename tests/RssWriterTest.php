@@ -28,6 +28,8 @@ use MarcW\RssWriter\Extension\Mrss\Rating;
 use MarcW\RssWriter\Extension\Mrss\MrssWriter;
 use MarcW\RssWriter\Extension\Fulltext\Fulltext;
 use MarcW\RssWriter\Extension\Fulltext\FulltextWriter;
+use MarcW\RssWriter\Extension\Rambler\Fulltext as RamblerFulltext;
+use MarcW\RssWriter\Extension\Rambler\RamblerWriter;
 use MarcW\RssWriter\RssWriter;
 
 class RssWriterTest extends \PHPUnit_Framework_TestCase
@@ -44,6 +46,7 @@ class RssWriterTest extends \PHPUnit_Framework_TestCase
         $rssWriter->registerWriter(new ContentWriter());
         $rssWriter->registerWriter(new MrssWriter());
         $rssWriter->registerWriter(new FulltextWriter());
+        $rssWriter->registerWriter(new RamblerWriter());
 
         $source = new Source();
         $source->setUrl('https://example.com')
@@ -128,11 +131,12 @@ class RssWriterTest extends \PHPUnit_Framework_TestCase
         $item->addExtension((new Content)->setContent('<p>What\'s up, doc?</p>'));
         $item->addExtension((new Mrss)->setRating((new Rating)->setValue(Rating::RATING_ADULT)));
         $item->addExtension((new Fulltext)->setFulltext('full-text content'));
+        $item->addExtension((new RamblerFulltext)->setFulltext('rambler full-text content'));
         $xml = $rssWriter->writeChannel($channel);
 
         $expected = <<<EOF
 <?xml version="1.0"?>
-<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" xmlns:slash="http://purl.org/rss/1.0/modules/slash/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/" xmlns:rambler="http://news.rambler.ru" version="2.0">
  <channel>
   <title><![CDATA[My Title]]></title>
   <link>https://www.example.com</link>
@@ -172,6 +176,7 @@ class RssWriterTest extends \PHPUnit_Framework_TestCase
    <content:encoded><![CDATA[<p>What's up, doc?</p>]]></content:encoded>
    <media:rating scheme="urn:simple">adult</media:rating>
    <full-text><![CDATA[full-text content]]></full-text>
+   <rambler:fulltext><![CDATA[rambler full-text content]]></rambler:fulltext>
   </item>
  </channel>
 </rss>
